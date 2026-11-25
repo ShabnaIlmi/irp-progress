@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pilot and progress log</title>
+<style>
+:root{color-scheme:dark;--bg:#0d1117;--ink:#e6edf3;--soft:#9198a1;--line:#3d444d;--line2:#262c36;--box:#151b23;--link:#4493f8;
+--fail:#db6d28;--pass:#4493f8;--hi:#d2a8ff;--grey:#3d444d}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif;overflow-x:clip}
+.wrap{max-width:900px;margin:0 auto;padding:32px max(4vw,16px) 40px}
+code,.code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:85%;background:#262c36;padding:.15em .4em;border-radius:6px}
+h1{font-size:2em;font-weight:600;margin:0 0 16px;padding-bottom:.3em;border-bottom:1px solid var(--line2)}
+h2{font-size:1.5em;font-weight:600;margin:28px 0 14px;padding-bottom:.3em;border-bottom:1px solid var(--line2)}
+h3{font-size:1.15em;font-weight:600;margin:24px 0 10px}
+p{margin:0 0 16px}
+.sub{color:var(--soft);margin-top:-8px}
+.sub a{color:var(--link)}
+nav{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line2);margin:24px 0 0}
+nav button{font:inherit;font-size:15px;background:none;border:0;border-bottom:2px solid transparent;color:var(--soft);padding:8px 14px 10px;cursor:pointer;margin-bottom:-1px}
+nav button:hover{color:var(--ink)}
+nav button[aria-selected=true]{color:var(--ink);font-weight:600;border-bottom-color:#f78166}
+nav button .n{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:2em;background:#2f3742;font-size:12px;font-weight:500;color:var(--ink)}
+button:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+section[hidden]{display:none}
+blockquote{margin:0 0 16px;padding:0 1em;color:var(--soft);border-left:.25em solid var(--line)}
+table{border-collapse:collapse;margin:0 0 16px;display:block;overflow-x:auto;max-width:100%}
+th,td{border:1px solid var(--line);padding:6px 13px;text-align:left;vertical-align:top}
+th{font-weight:600}
+tr:nth-child(2n) td{background:var(--box)}
+td.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sq{display:grid;gap:3px}
+.sq i{display:block;aspect-ratio:1}
+.eight{grid-template-columns:repeat(8,14px);gap:3px}
+.bar{display:flex;height:12px;width:220px;background:var(--grey)}.bar i{display:block;height:100%;background:var(--hi)}
+.waffle{grid-template-columns:repeat(40,1fr);gap:2px;max-width:640px}
+.f{background:var(--fail)}.p{background:var(--pass)}.h{background:var(--hi)}.g{background:var(--grey)}
+.key{color:var(--soft);font-size:14px;margin:8px 0 16px}
+.key b{display:inline-block;width:10px;height:10px;margin:0 5px 0 0;vertical-align:0}
+.key span{margin-right:16px}
+ul{margin:0 0 16px;padding-left:2em}li{margin:4px 0}
+ul.tasks{list-style:none;padding-left:.4em}
+ul.tasks input{margin:0 .5em 0 0;vertical-align:-1px;accent-color:#238636}
+.muted{color:var(--soft)}
+.pager{display:flex;justify-content:space-between;margin-top:28px;padding-top:16px;border-top:1px solid var(--line2)}
+.pager button{font:inherit;font-size:14px;background:#212830;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 16px;cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+footer{color:var(--soft);font-size:12px;margin-top:24px}
+@media(max-width:600px){.waffle{grid-template-columns:repeat(20,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Pilot and progress log</h1>
+<p class="sub">Fathima Shabna Ilmi · CM4609 FYP · updated 25 Nov 2026</p>
+<p>What I have actually run so far for my project, <em>From Injected to Organic Failures</em>. Each square below is one real task run. Tabs 1 to 3 are my main agent, Qwen3-8B: the pilot, the full run and the labels. Tab 4 is the four other agents I use to test transfer (RQ2), and tab 5 is where things stand.</p>
+<p class="muted">Setup: <code>BFCL v3 multi-turn</code>, run with <code>Ollama</code> locally and on Kaggle (2×T4). Main agent <code>Qwen3-8B</code>; other agents <code>Granite 4.1 8B</code>, <code>Llama 3.1 8B</code>, <code>Ministral 3 8B</code>, <code>Qwen3.5-27B</code>.</p>
+<nav role="tablist" aria-label="Steps" id="steps"></nav>
+
+<section id="pilot" role="tabpanel">
+<h2>1. Pilot run</h2>
+<p>Before running everything, I tried Qwen3-8B on 24 tasks, eight from each of three categories. I wanted to know three things: does it fail often enough to study, does my scoring agree with the official checker, and can I replay a run exactly.</p>
+<blockquote><p>Each square is one pilot task. Orange means the agent failed it, blue means it passed. Here a failure is useful: I need real mistakes to study.</p></blockquote>
+<table>
+<tr><th>Category</th><th>Runs</th><th>Failed</th></tr>
+<tbody id="pilotRows"></tbody>
+</table>
+<div class="key"><span><b class="f"></b>failed</span><span><b class="p"></b>passed</span></div>
+<h3>Checks</h3>
+<table>
+<tr><th>Check</th><th>Result</th></tr>
+<tr><td>Total failed</td><td class="r">20 / 24 (83%)</td></tr>
+<tr><td>My scoring vs BFCL checker</td><td class="r">24 / 24 agree</td></tr>
+<tr><td>Unchanged replay reproduces the run</td><td class="r">10 / 10</td></tr>
+</table>
+</section>
+
+<section id="fullrun" role="tabpanel" hidden>
+<h2>2. Full run</h2>
+<p>After the pilot, Qwen3-8B ran all 800 BFCL tasks: 200 scenarios, each in four versions (base, missing function, missing parameter, long context).</p>
+<blockquote><p>All 800 runs are here, one square each. Orange squares failed, blue squares passed. The official checker agreed with my scoring on all 800.</p></blockquote>
+<div class="sq waffle" id="waffleRun" role="img" aria-label="800 runs: 708 failed, 92 passed"></div>
+<div class="key"><span><b class="f"></b>failed, 708</span><span><b class="p"></b>passed, 92</span></div>
+<p>The 92 passing runs are where injected failures come from: 73 of them are usable as hosts, and so far about 1,176 injected failures have been generated towards a target of 1,500.</p>
+</section>
+
+<section id="labels" role="tabpanel" hidden>
+<h2>3. Decisive turns</h2>
+<p>For each failed run, I went back one turn at a time, replaced the agent’s response with the correct one, and let it carry on. The earliest turn whose fix made the task succeed is the decisive turn.</p>
+<blockquote><p>Each square is one of the 708 failed runs. Purple squares got a decisive turn from replay. Grey squares had no single fixable turn, often because of two separate mistakes, so I left them unresolved instead of guessing.</p></blockquote>
+<div class="sq waffle" id="waffleLab" role="img" aria-label="708 failed runs: 300 resolved, 408 unresolved"></div>
+<div class="key"><span><b class="h"></b>decisive turn found, 300</span><span><b class="g"></b>unresolved, 408</span></div>
+<p>That is 42% coverage, and I report it next to every accuracy figure. Separately, five runs were excluded for context overflow, leaving 703 in the labelling pool. Six annotators now check sampled labels, three judgements per trace, without seeing the replay answer.</p>
+</section>
+
+<section id="agents" role="tabpanel" hidden>
+<h2>4. Other agents (RQ2)</h2>
+<p>To check whether localisers transfer to other models, I ran four more agents on 160 of the same BFCL tasks and labelled their failures with the same replay method as Qwen3-8B.</p>
+<blockquote><p>Each bar is one agent’s labelled failures. Purple means replay found a decisive turn, grey means unresolved. The agents fail at very different rates, which is part of what RQ2 tests.</p></blockquote>
+<table>
+<tr><th>Agent</th><th>Failed</th><th>Passed</th><th>Labelled failures</th><th>Decisive turn</th><th>Unresolved</th></tr>
+<tbody id="agentRows"></tbody>
+</table>
+<div class="key"><span><b class="h"></b>decisive turn found</span><span><b class="g"></b>unresolved</span></div>
+<p class="muted">Counts are original runs only (replays excluded). For the four other agents, a few failed runs are not in the label file (Granite 3, Llama 1, Ministral 4, Qwen3.5-27B 2). Ministral’s log has 161 runs for 160 tasks.</p>
+</section>
+
+<section id="progress" role="tabpanel" hidden>
+<h2>5. Progress</h2>
+<p>Data collection is finished for all five agents. The comparison of localisers, which answers my research questions, is next.</p>
+<h3>Done</h3>
+<ul class="tasks">
+<li><input type="checkbox" checked disabled>Pilot, 24 tasks <span class="muted">(scoring and replay checked)</span></li>
+<li><input type="checkbox" checked disabled>All 5 agents run <span class="muted">(Qwen3-8B plus 4 probes)</span></li>
+<li><input type="checkbox" checked disabled>Replay labelling pass <span class="muted">(300 of 708 resolved)</span></li>
+<li><input type="checkbox" checked disabled>Injected failures generated <span class="muted">(about 1,176)</span></li>
+<li><input type="checkbox" checked disabled>Annotation batch 1 <span class="muted">(reviewed)</span></li>
+</ul>
+<h3>Now</h3>
+<ul class="tasks">
+<li><input type="checkbox" disabled>Human annotation <span class="muted">(remaining batches)</span></li>
+<li><input type="checkbox" disabled>Label verification <span class="muted">(agreement with Fleiss’ kappa)</span></li>
+</ul>
+<h3>Next</h3>
+<ul class="tasks">
+<li><input type="checkbox" disabled>Evaluate 7 localisers <span class="muted">(baselines, prompted judges, trained rankers)</span></li>
+<li><input type="checkbox" disabled>Analyse the gaps <span class="muted">(RQ1 to RQ3)</span></li>
+<li><input type="checkbox" disabled>Thesis and viva <span class="muted">(April)</span></li>
+</ul>
+</section>
+
+<div class="pager"><button id="prev" type="button">← Previous</button><button id="next" type="button">Next →</button></div>
+<footer>irp-step-level-failure-localisation-v2</footer>
+</div>
+
+<script>
+{
+const steps=[["pilot","Pilot run","24"],["fullrun","Full run","800"],["labels","Decisive turns","708"],["agents","Other agents","4"],["progress","Progress",""]];
+const pilot=[["Base",6,8],["Missing function",8,8],["Missing parameter",6,8]];
+const $=id=>document.getElementById(id);
+const agents=[["Qwen3-8B (main)",708,92,708,300,408],["Granite 4.1 8B",105,55,102,58,44],["Llama 3.1 8B",154,6,153,34,119],["Ministral 3 8B",135,26,131,54,77],["Qwen3.5-27B",69,91,67,50,17]];
+const sq=(cls,n)=>Array.from({length:n},()=>`<i class="${cls}"></i>`).join("");
+$("pilotRows").innerHTML=pilot.map(([n,f,t])=>`<tr><td>${n}</td><td><div class="sq eight" role="img" aria-label="${n}: ${f} of ${t} failed">${sq("f",f)}${sq("p",t-f)}</div></td><td class="r">${f} / ${t}</td></tr>`).join("");
+$("agentRows").innerHTML=agents.map(([n,f,p,l,r,u])=>`<tr><td>${n}</td><td class="r">${f}</td><td class="r">${p}</td><td><div class="bar" role="img" aria-label="${r} of ${l} resolved"><i style="width:${(100*r/l).toFixed(1)}%"></i></div></td><td class="r">${r} (${Math.round(100*r/l)}%)</td><td class="r">${u}</td></tr>`).join("");
+$("waffleRun").innerHTML=sq("f",708)+sq("p",92);
+$("waffleLab").innerHTML=sq("h",300)+sq("g",408);
+const nav=$("steps");
+nav.innerHTML=steps.map(([id,t,n])=>`<button role="tab" id="t-${id}" aria-controls="${id}" type="button">${t}${n?`<span class="n">${n}</span>`:""}</button>`).join("");
+const prev=$("prev"),next=$("next");let cur=0;
+const show=i=>{cur=Math.max(0,Math.min(steps.length-1,i));steps.forEach(([id],k)=>{$(id).hidden=k!==cur;const b=$("t-"+id);b.setAttribute("aria-selected",k===cur);b.tabIndex=k===cur?0:-1});prev.disabled=cur===0;next.disabled=cur===steps.length-1;if(location.hash!=="#"+steps[cur][0])history.replaceState(null,"","#"+steps[cur][0])};
+const fromHash=()=>{const k=steps.findIndex(([id])=>"#"+id===location.hash);show(k<0?0:k)};
+nav.addEventListener("click",e=>{const b=e.target.closest("button");if(b)show(steps.findIndex(([id])=>"t-"+id===b.id))});
+prev.addEventListener("click",()=>show(cur-1));next.addEventListener("click",()=>show(cur+1));
+addEventListener("keydown",e=>{if(e.key==="ArrowRight")show(cur+1);if(e.key==="ArrowLeft")show(cur-1)});
+addEventListener("hashchange",fromHash);fromHash();
+}
+</script>
+</body>
+</html>
