@@ -138,16 +138,26 @@ footer{color:var(--soft);font-size:12px;margin-top:24px}
 
 <section id="support" role="tabpanel" hidden>
 <h2>5. Supporting runs</h2>
-<p>Besides the agent’s main runs, the project made runs to check the setup and to create labels. These are never counted as main runs: each replay records the run it came from.</p>
+<p>Besides each agent’s main runs, the project made runs to check the setup, to create labels, and to replace runs after a fix. These are never counted as main runs: each replay records the run it came from.</p>
 <table>
-<tr><th>Type</th><th>Runs (Qwen3-8B)</th><th>Why it exists</th></tr>
-<tr><td>Pilot</td><td class="r">24</td><td>The first small test, before the full run</td></tr>
-<tr><td>Setup checks</td><td class="r">45</td><td>Testing fixes: smoke tests, the reply-length cap, ties, replay</td></tr>
-<tr><td>Causal replays</td><td class="r">1,987</td><td>Each time one turn was fixed and the run replayed to find the decisive turn</td></tr>
-<tr><td>Injection replays</td><td class="r">2,079</td><td>Each injection attempt that was replayed (T1 579, T2 1,229, T3 271)</td></tr>
-<tr><td><strong>Total</strong></td><td class="r"><strong>4,135</strong></td><td></td></tr>
+<tr><th>Type</th><th>Qwen3-8B</th><th>Granite 4.1 8B</th><th>Llama 3.1 8B</th><th>Ministral 3 8B</th><th>Qwen3.5-27B</th><th>Total</th></tr>
+<tr><td>Pilot</td><td class="r">24</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">24</td></tr>
+<tr><td>Setup checks</td><td class="r">45</td><td class="r">0</td><td class="r">5</td><td class="r">0</td><td class="r">0</td><td class="r">50</td></tr>
+<tr><td>Causal replays</td><td class="r">1,987</td><td class="r">335</td><td class="r">651</td><td class="r">362</td><td class="r">152</td><td class="r">3,487</td></tr>
+<tr><td>Injection replays</td><td class="r">2,079</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">0</td><td class="r">2,079</td></tr>
+<tr><td>Replaced main runs</td><td class="r">0</td><td class="r">2</td><td class="r">160</td><td class="r">0</td><td class="r">0</td><td class="r">162</td></tr>
+<tr><td><strong>Total</strong></td><td class="r"><strong>4,135</strong></td><td class="r"><strong>337</strong></td><td class="r"><strong>816</strong></td><td class="r"><strong>362</strong></td><td class="r"><strong>152</strong></td><td class="r"><strong>5,802</strong></td></tr>
 </table>
-<p class="muted">Only their results are used: the decisive-turn labels and the kept injections.</p>
+<h3>What each type is</h3>
+<table>
+<tr><th>Type</th><th>Why it exists</th></tr>
+<tr><td>Pilot</td><td>The first small test on 24 tasks, before the full run</td></tr>
+<tr><td>Setup checks</td><td>Testing fixes. Qwen3-8B: smoke tests 8, reply-length cap 2, ties 13, replay 20, other tests 2. Llama 3.1 8B: determinism tests 4, other test 1</td></tr>
+<tr><td>Causal replays</td><td>Each time one turn was fixed and the run replayed to find the decisive turn. Granite and Llama replay each fix twice, so they need more replays per failure</td></tr>
+<tr><td>Injection replays</td><td>Each injection attempt that was replayed (T1 579, T2 1,229, T3 271). Injected failures were only made from Qwen3-8B runs</td></tr>
+<tr><td>Replaced main runs</td><td>Earlier main runs replaced after a fix: Llama’s first full run (before the fix for tool calls written in reply text) and 2 Granite tasks</td></tr>
+</table>
+<p class="muted">Only their results are used: the decisive-turn labels and the kept injections. With the 1,441 main runs (Qwen3-8B 800, Granite 160, Llama 160, Ministral 161, Qwen3.5-27B 160), this accounts for all 7,243 runs in the run index.</p>
 </section>
 
 <section id="progress" role="tabpanel" hidden>
@@ -180,7 +190,7 @@ footer{color:var(--soft);font-size:12px;margin-top:24px}
 
 <script>
 {
-const steps=[["pilot","Pilot run","24"],["fullrun","Full run","800"],["labels","Decisive turns","708"],["agents","Other agents","4"],["support","Supporting runs","4,135"],["progress","Progress",""]];
+const steps=[["pilot","Pilot run","24"],["fullrun","Full run","800"],["labels","Decisive turns","708"],["agents","Other agents","4"],["support","Supporting runs","5,802"],["progress","Progress",""]];
 const pilot=[["Base",6,8],["Missing function",8,8],["Missing parameter",6,8]];
 const $=id=>document.getElementById(id);
 const agents=[["Qwen3-8B (main)",708,92,708,300,408],["Granite 4.1 8B",105,55,102,58,44],["Llama 3.1 8B",154,6,153,34,119],["Ministral 3 8B",135,26,131,54,77],["Qwen3.5-27B",69,91,67,50,17]];
