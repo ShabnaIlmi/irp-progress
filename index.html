@@ -84,13 +84,13 @@ footer{color:var(--soft);font-size:12px;margin-top:24px}
 <div class="key"><span><b class="f"></b>failed, 708</span><span><b class="p"></b>passed, 92</span></div>
 <p>The 92 passing runs are where injected failures come from: 73 of them are usable as hosts, and so far about 1,176 injected failures have been generated towards a target of 1,500.</p>
 <h3>T3 donor models</h3>
-<p>In T3, another model writes the chosen turn on Qwen3-8B’s exact history, and Qwen3-8B plays the later turns.</p>
+<p>In T3, another model writes the chosen turn on Qwen3-8B’s exact history, and Qwen3-8B plays the later turns. Each donor was asked once at each of the 278 usable turns (73 clean runs). An attempt is kept only if the run still fails and the changed turn fails its own check; if the donor wrote the same calls as Qwen, the attempt is not used.</p>
 <table>
-<tr><th>Donor model</th><th>Injections kept</th></tr>
-<tr><td>Llama 3.1 8B</td><td class="r">87</td></tr>
-<tr><td>Ministral 3 8B</td><td class="r">59</td></tr>
-<tr><td>Granite 4.1 8B</td><td class="r">33</td></tr>
-<tr><td><strong>Total</strong></td><td class="r"><strong>179</strong></td></tr>
+<tr><th>Donor model</th><th>Attempts</th><th>Same as Qwen’s turn</th><th>Agent recovered</th><th>Masked</th><th>Kept</th></tr>
+<tr><td>Llama 3.1 8B</td><td class="r">278</td><td class="r">154</td><td class="r">34</td><td class="r">3</td><td class="r">87</td></tr>
+<tr><td>Ministral 3 8B</td><td class="r">278</td><td class="r">196</td><td class="r">21</td><td class="r">2</td><td class="r">59</td></tr>
+<tr><td>Granite 4.1 8B</td><td class="r">278</td><td class="r">220</td><td class="r">23</td><td class="r">2</td><td class="r">33</td></tr>
+<tr><td><strong>Total</strong></td><td class="r"><strong>834</strong></td><td class="r"><strong>570</strong></td><td class="r"><strong>78</strong></td><td class="r"><strong>7</strong></td><td class="r"><strong>179</strong></td></tr>
 </table>
 </section>
 
