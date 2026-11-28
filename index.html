@@ -54,7 +54,7 @@ footer{color:var(--soft);font-size:12px;margin-top:24px}
 <div class="wrap">
 <h1>Pilot and progress log</h1>
 <p class="sub">Fathima Shabna Ilmi · CM4609 FYP · updated 28 Nov 2026</p>
-<p>What I have actually run so far for my project, <em>From Injected to Organic Failures</em>. Each square below is one real task run. Tabs 1 to 3 are my main agent, Qwen3-8B: the pilot, the full run and the labels. Tab 4 is the four other agents I use to test transfer (RQ2), and tab 5 is where things stand.</p>
+<p>What I have actually run so far for my project, <em>From Injected to Organic Failures</em>. Each square below is one real task run. Tabs 1 to 3 are my main agent, Qwen3-8B: the pilot, the full run and the labels. Tab 4 is the four other agents I use to test transfer (RQ2), tab 5 lists the runs made for checks and labels, and tab 6 is where things stand.</p>
 <p class="muted">Setup: <code>BFCL v3 multi-turn</code>, run with <code>Ollama</code> locally and on Kaggle (2×T4). Main agent <code>Qwen3-8B</code>; other agents <code>Granite 4.1 8B</code>, <code>Llama 3.1 8B</code>, <code>Ministral 3 8B</code>, <code>Qwen3.5-27B</code>.</p>
 <nav role="tablist" aria-label="Steps" id="steps"></nav>
 
@@ -113,10 +113,45 @@ footer{color:var(--soft);font-size:12px;margin-top:24px}
 </table>
 <div class="key"><span><b class="h"></b>decisive turn found</span><span><b class="g"></b>unresolved</span></div>
 <p class="muted">Counts are original runs only (replays excluded). For the four other agents, a few failed runs are not in the label file (Granite 3, Llama 1, Ministral 4, Qwen3.5-27B 2). Ministral’s log has 161 runs for 160 tasks.</p>
+<h3>Failures by BFCL category</h3>
+<p>Failed runs out of all runs, for each of the four BFCL multi-turn categories. Qwen3-8B ran 200 tasks per category; the other agents ran 40.</p>
+<table>
+<tr><th>Agent</th><th>Base</th><th>Missing function</th><th>Missing parameter</th><th>Long context</th><th>Total</th></tr>
+<tr><td>Qwen3-8B (main)</td><td class="r">167 / 200</td><td class="r">191 / 200</td><td class="r">174 / 200</td><td class="r">176 / 200</td><td class="r">708 / 800</td></tr>
+<tr><td>Granite 4.1 8B</td><td class="r">21 / 40</td><td class="r">33 / 40</td><td class="r">26 / 40</td><td class="r">25 / 40</td><td class="r">105 / 160</td></tr>
+<tr><td>Llama 3.1 8B</td><td class="r">38 / 40</td><td class="r">40 / 40</td><td class="r">38 / 40</td><td class="r">38 / 40</td><td class="r">154 / 160</td></tr>
+<tr><td>Ministral 3 8B</td><td class="r">32 / 41</td><td class="r">35 / 40</td><td class="r">39 / 40</td><td class="r">29 / 40</td><td class="r">135 / 161</td></tr>
+<tr><td>Qwen3.5-27B</td><td class="r">15 / 40</td><td class="r">16 / 40</td><td class="r">20 / 40</td><td class="r">18 / 40</td><td class="r">69 / 160</td></tr>
+</table>
+<h3>Why the runs failed</h3>
+<p>BFCL’s checker gives each failed run one reason.</p>
+<table>
+<tr><th>Agent</th><th>Wrong final state</th><th>Wrong tool results</th><th>No tool calls in a turn that needed them</th><th>Stopped at the 20-step limit</th></tr>
+<tr><td>Qwen3-8B (main)</td><td class="r">382</td><td class="r">166</td><td class="r">160</td><td class="r">0</td></tr>
+<tr><td>Granite 4.1 8B</td><td class="r">72</td><td class="r">13</td><td class="r">16</td><td class="r">4</td></tr>
+<tr><td>Llama 3.1 8B</td><td class="r">94</td><td class="r">56</td><td class="r">2</td><td class="r">2</td></tr>
+<tr><td>Ministral 3 8B</td><td class="r">76</td><td class="r">16</td><td class="r">40</td><td class="r">3</td></tr>
+<tr><td>Qwen3.5-27B</td><td class="r">42</td><td class="r">9</td><td class="r">16</td><td class="r">2</td></tr>
+</table>
+<p class="muted">BFCL names: <code>instance_state_mismatch</code>, <code>execution_response_mismatch</code>, <code>empty_turn_model_response</code>, <code>force_terminated</code>.</p>
+</section>
+
+<section id="support" role="tabpanel" hidden>
+<h2>5. Supporting runs</h2>
+<p>Besides the agent’s main runs, the project made runs to check the setup and to create labels. These are never counted as main runs: each replay records the run it came from.</p>
+<table>
+<tr><th>Type</th><th>Runs (Qwen3-8B)</th><th>Why it exists</th></tr>
+<tr><td>Pilot</td><td class="r">24</td><td>The first small test, before the full run</td></tr>
+<tr><td>Setup checks</td><td class="r">45</td><td>Testing fixes: smoke tests, the reply-length cap, ties, replay</td></tr>
+<tr><td>Causal replays</td><td class="r">1,987</td><td>Each time one turn was fixed and the run replayed to find the decisive turn</td></tr>
+<tr><td>Injection replays</td><td class="r">2,079</td><td>Each injection attempt that was replayed (T1 579, T2 1,229, T3 271)</td></tr>
+<tr><td><strong>Total</strong></td><td class="r"><strong>4,135</strong></td><td></td></tr>
+</table>
+<p class="muted">Only their results are used: the decisive-turn labels and the kept injections.</p>
 </section>
 
 <section id="progress" role="tabpanel" hidden>
-<h2>5. Progress</h2>
+<h2>6. Progress</h2>
 <p>Data collection is finished for all five agents. The comparison of localisers, which answers my research questions, is next.</p>
 <h3>Done</h3>
 <ul class="tasks">
@@ -145,7 +180,7 @@ footer{color:var(--soft);font-size:12px;margin-top:24px}
 
 <script>
 {
-const steps=[["pilot","Pilot run","24"],["fullrun","Full run","800"],["labels","Decisive turns","708"],["agents","Other agents","4"],["progress","Progress",""]];
+const steps=[["pilot","Pilot run","24"],["fullrun","Full run","800"],["labels","Decisive turns","708"],["agents","Other agents","4"],["support","Supporting runs","4,135"],["progress","Progress",""]];
 const pilot=[["Base",6,8],["Missing function",8,8],["Missing parameter",6,8]];
 const $=id=>document.getElementById(id);
 const agents=[["Qwen3-8B (main)",708,92,708,300,408],["Granite 4.1 8B",105,55,102,58,44],["Llama 3.1 8B",154,6,153,34,119],["Ministral 3 8B",135,26,131,54,77],["Qwen3.5-27B",69,91,67,50,17]];
